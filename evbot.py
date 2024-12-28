@@ -99,9 +99,9 @@ if __name__ == "__main__":
                     tf = doc[1][w] if w in doc[1] else 0
                     score += (idf * tf * (k1+1) / (tf + k1 * (1 - b + (b * doc[2] / avgdl))))
             if querybow[1]<=5:
-                factor = (1/20)*querybow[1]+0.75
+                factor = (1/20)*querybow[1]+0.8
             else:
-                factor = 5/(querybow[1])
+                factor = 4/(querybow[1])
             scores[doc[0]] = (random.random()/2.5+0.8) * score * factor
         scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
         print(dict(list(scores.items())[:10]))
