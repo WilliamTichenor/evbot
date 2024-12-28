@@ -101,7 +101,7 @@ if __name__ == "__main__":
             if querybow[1]<=5:
                 factor = (1/20)*querybow[1]+0.8
             else:
-                factor = 20/(querybow[1]+16)
+                factor = 4/(querybow[1])
             scores[doc[0]] = (random.random()/2.5+0.8) * score * factor
         scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
 
