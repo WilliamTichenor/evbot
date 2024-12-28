@@ -1,6 +1,7 @@
 import math
 import os
 import re
+import random
 import discord
 from dotenv import load_dotenv
 
@@ -10,6 +11,8 @@ def loadDocs():
     file = open("ParkourCivilizationTranscript.txt", "r", encoding='utf-8')
     totalbow = {}
     for s in file.read().split("\n"):
+        if not s:
+            continue
         doc = []
         if (s and (s[0] == '"' or s[0] == '“' or s[0] == '“')):
             s = s.strip('”')
@@ -27,7 +30,7 @@ def loadDocs():
             else: 
                 bow[w] = 1
         for key in list(bow.keys()):
-            if w in bow:
+            if w in totalbow:
                 totalbow[w] += 1
             else: 
                 totalbow[w] = 1
@@ -38,6 +41,8 @@ def loadDocs():
     return data
 
 def convertBOW(s):
+    # bow = [{BOW}, len]
+    bowlen = 0
     s = s.lower()
     s = s.replace('-',' ')
     s = s.replace('/',' ')
@@ -45,21 +50,23 @@ def convertBOW(s):
     s = re.sub(r'[^a-z0-9\s]', '', s)
     bow = {}
     for w in s.split():
+        bowlen += 1
         if w in bow:
             bow[w] += 1
         else: 
             bow[w] = 1
-    return bow
+    return [bow, bowlen]
 
 
 if __name__ == "__main__":
 
+    random.seed()
     data = loadDocs()
     #print(data)
     numdocs = len(data[0])
     avgdl = sum(x[2] for x in data[0])/numdocs
     print(avgdl)
-    k1 = 1.5
+    k1 = 1.3
     b = .75
 
     load_dotenv("secrets.env")
@@ -79,16 +86,28 @@ if __name__ == "__main__":
             return
         print(message.content)
         querybow = convertBOW(message.content)
-        print(querybow)
+        #print(querybow)
 
+        scores = {}
         for doc in data[0]:
-            for w in list(querybow.keys()):
-                for i in range(1,querybow[w]): # run the query word for the number of times it appears!
-                    pass # TODO
-            #calculate BM25 score
-            idf = math.log((numdocs) / ())
+            score = 0
+            for w in list(querybow[0].keys()):
+                for i in range(0,querybow[0][w]): # run the query word for the number of times it appears!
+                    #calculate iteration of BM25 score
+                    nqi = data[1][w] if w in data[1] else 0
+                    idf = math.log(((numdocs-nqi+.5) / (nqi+.5)) + 1)
+                    tf = doc[1][w] if w in doc[1] else 0
+                    score += (idf * tf * (k1+1) / (tf + k1 * (1 - b + (b * doc[2] / avgdl))))
+            if querybow[1]<=5:
+                factor = (1/20)*querybow[1]+0.75
+            else:
+                factor = 5/(querybow[1])
+            scores[doc[0]] = (random.random()/2.5+0.8) * score * factor
+        scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
+        print(dict(list(scores.items())[:10]))
 
-        await message.channel.send(message.content)
+        if len(scores) > 0 and scores[list(scores)[0]] > 15.0:
+            await message.channel.send(list(scores)[0])
 
 
     client.run(TOKEN)
