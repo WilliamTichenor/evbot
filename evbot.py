@@ -106,7 +106,7 @@ if __name__ == "__main__":
         scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
         print(dict(list(scores.items())[:10]))
 
-        if len(scores) > 0 and scores[list(scores)[0]] > 15.0:
+        if len(scores) > 0 and scores[list(scores)[0]] > 17.0:
             await message.channel.send(list(scores)[0])
 
 
