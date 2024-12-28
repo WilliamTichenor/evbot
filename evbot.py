@@ -104,9 +104,9 @@ if __name__ == "__main__":
                 factor = 20/(querybow[1]+16)
             scores[doc[0]] = (random.random()/2.5+0.8) * score * factor
         scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
-        print(dict(list(scores.items())[:10]))
+        print(dict(list(scores.items())[0]))
 
-        if len(scores) > 0 and scores[list(scores)[0]] > 24.0:
+        if len(scores) > 0 and scores[list(scores)[0]] > (random.random()/2+0.75) * 24.0:
             await message.channel.send(list(scores)[0])
 
 
