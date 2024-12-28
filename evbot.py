@@ -110,8 +110,9 @@ if __name__ == "__main__":
         print(list(scores)[0])
 
         if len(scores) > 0 and scores[list(scores)[0]] > threshold:
-            print("Sending Match...\n")
+            print("Sending Match...")
             await message.channel.send(list(scores)[0])
+        print("")
 
 
     client.run(TOKEN)
