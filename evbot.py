@@ -14,10 +14,9 @@ def loadDocs():
         if not s:
             continue
         doc = []
-        if (s and (s[0] == '"' or s[0] == '“' or s[0] == '“')):
-            s = s.strip('”')
-            s = s.strip('“')
-            s = s.strip('"')
+        quotes = ['"','“','”']
+        if (s and s[0] in quotes and s[-1] in quotes):
+            s = s.strip("".join(c for c in quotes))
         s = s.replace('-',' ')
         s = s.replace('—',' ')
         doc.append(s)
